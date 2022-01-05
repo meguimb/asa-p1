@@ -6,6 +6,7 @@
 using namespace std;
 int *largest_seq_size(vector<int> arr1, int len);
 int *num_increasing_subs_size_k(vector<int> sequence, int len);
+int *algo_2(vector<int> sequence, int len);
 
 int main() {
     int len=0, type, a;
@@ -19,8 +20,8 @@ int main() {
         len++;
     }
 
-    int *rtn_val = num_increasing_subs_size_k(sequence, len);
-
+    // int *rtn_val = num_increasing_subs_size_k(sequence, len);
+    int *rtn_val = algo_2(sequence, len);
     // printf de t e c, separados por um espaço, onde t é o tamanho da maior
     // subsequencia e c o numero de subsequencias com tamanho t (maximo)
     printf("%d %d\n", rtn_val[0], rtn_val[1]);
@@ -62,8 +63,8 @@ int *num_increasing_subs_size_k(vector<int> sequence, int len){
     // second value: number of subsequences with that size
     int *rtn_vals = (int *) malloc(sizeof(int)*2); 
     int count_subs = 0;
-    vector<int> lis(len, 1);
-    vector<int> count(len, 1);
+    vector<int> lis(len, 1); // initialize all longest increasing subsequences to 1 (each number is its own sequence)
+    vector<int> count(len, 1); // number of 
 
     if (len <= 1) { 
         return NULL; 
@@ -93,6 +94,31 @@ int *num_increasing_subs_size_k(vector<int> sequence, int len){
         }
     }
     rtn_vals[1] = count_subs;
+
+    // return 
+    return rtn_vals;
+}
+
+int *algo_2(vector<int> sequence, int len){
+    int *rtn_vals = (int *) malloc(sizeof(int)*2); 
+    // length of Longest Increasing Sequence starting at sequence[i]
+    vector<int> lengthOfLIS(len, 1);
+    // number of Longest Increasing Sequences of length lengthOfLIS[i] starting at sequence[i]
+    vector<int> countOfLIS(len, 1);
+
+    for (int i = len - 1; i >= 0; i--){
+        for (int j = i+1; j < len; j++){
+            if (sequence[i] < sequence[j]){
+                lengthOfLIS[i] = max(1 + lengthOfLIS[j], lengthOfLIS[i]);
+                countOfLIS[i] = min(countOfLIS[i+1]+1, countOfLIS[j]+1);
+                //countOfLIS[i] = max(countOfLIS[i], min(countOfLIS[i]+1, countOfLIS[j]));
+            }
+        }
+    }
+
+    // get first return value - size of longest subsequence which is maximum of lis
+    rtn_vals[0] = *max_element(lengthOfLIS.begin(), lengthOfLIS.end());
+    rtn_vals[1] = *max_element(countOfLIS.begin(), countOfLIS.end());
 
     // return 
     return rtn_vals;
