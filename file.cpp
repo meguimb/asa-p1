@@ -29,34 +29,6 @@ int main() {
     return 0;
 }
 
-// function that compares ordered array with another array (can be different size)
-// and outputs biggest common sequence
-int largest_common_seq(vector<int> arr1, vector<int> ordered_arr, int len){
-    for (int i = 0; i < len; i++){
-        if (i>=1 && ordered_arr[i]==ordered_arr[i+1]){continue; }
-        else{
-            // TODO
-            return 0;
-        }
-    }
-    return 1;
-}
-
-int *largest_seq_size(vector<int> arr1, int len){
-    int *largest_seq_int = (int *) malloc(sizeof(int)*len);
-    for (int i = 0; i < len; i++){
-        largest_seq_int[i] = 1;
-    }
-    for (int i = 0; i < len; i++){
-        for (int j = 0; j < i; j++){
-            if (arr1[i] > arr1[j]){
-                largest_seq_int[i] = max(largest_seq_int[i], largest_seq_int[j] + 1);
-            }
-        }
-    }
-    return largest_seq_int;
-}
-
 int *num_increasing_subs_size_k(vector<int> sequence, int len){
     // first value: size of longest subsequence
     // second value: number of subsequences with that size
@@ -99,6 +71,7 @@ int *num_increasing_subs_size_k(vector<int> sequence, int len){
 }
 
 int *algo_2(vector<int> sequence, int len){
+    int n_max_size = 0;
     int *rtn_vals = (int *) malloc(sizeof(int)*2); 
     // length of Longest Increasing Sequence starting at sequence[i]
     vector<int> lengthOfLIS(len, 1);
@@ -108,7 +81,6 @@ int *algo_2(vector<int> sequence, int len){
     for (int i = len - 1; i >= 0; i--){
         for (int j = i+1; j < len; j++){
             if (sequence[i] < sequence[j]){
-                // lengthOfLIS[i] = max(1 + lengthOfLIS[j], lengthOfLIS[i]);
                 // se adicionámos 1 ao len, ir buscar as counts do len menor e somá-las
                 if (lengthOfLIS[j] + 1 > lengthOfLIS[i]){
                     lengthOfLIS[i] = lengthOfLIS[j] + 1;
@@ -121,6 +93,7 @@ int *algo_2(vector<int> sequence, int len){
         }
         countOfLIS[i] = max(countOfLIS[i], 1);
     }
+    /*
     cout << endl;
     for (int i = 0; i < len; i++){
         cout << sequence[i] << " ";
@@ -135,18 +108,17 @@ int *algo_2(vector<int> sequence, int len){
         cout << lengthOfLIS[i] << " ";
     }
     cout << endl;
+    */
     // get first return value - size of longest subsequence which is maximum of lis
     rtn_vals[0] = *max_element(lengthOfLIS.begin(), lengthOfLIS.end());
-    /**
-    int count = 0;
+
+    // get second return value - number of LIS with max size (rtn_vals[0])
     for (int i = 0; i < len; i++){
-        printf("%d %d\n", lengthOfLIS[i], countOfLIS[i]);
-        if (lengthOfLIS[i]==rtn_vals[0]){
-            count++;
+        if (lengthOfLIS[i] == rtn_vals[0]){
+            n_max_size += countOfLIS[i];
         }
     }
-    rtn_vals[1] = count; */
-    rtn_vals[1] = *max_element(countOfLIS.begin(), countOfLIS.end());
-    // return 
+    rtn_vals[1] = n_max_size;
+
     return rtn_vals;
 }
