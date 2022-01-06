@@ -99,7 +99,6 @@ int *num_increasing_subs_size_k(vector<int> sequence, int len){
 }
 
 int *algo_2(vector<int> sequence, int len){
-    int b = 0, stop;
     int *rtn_vals = (int *) malloc(sizeof(int)*2); 
     // length of Longest Increasing Sequence starting at sequence[i]
     vector<int> lengthOfLIS(len, 1);
@@ -107,61 +106,20 @@ int *algo_2(vector<int> sequence, int len){
     vector<int> countOfLIS(len, 0);
     countOfLIS[len-1] = 1;
     for (int i = len - 1; i >= 0; i--){
-        b = 0;
-        stop = 0;
         for (int j = i+1; j < len; j++){
             if (sequence[i] < sequence[j]){
-                lengthOfLIS[i] = max(1 + lengthOfLIS[j], lengthOfLIS[i]);
+                // lengthOfLIS[i] = max(1 + lengthOfLIS[j], lengthOfLIS[i]);
                 // se adicionámos 1 ao len, ir buscar as counts do len menor e somá-las
                 if (lengthOfLIS[j] + 1 > lengthOfLIS[i]){
-                    b = countOfLIS[j];
-                    stop = 1;
+                    lengthOfLIS[i] = lengthOfLIS[j] + 1;
+                    countOfLIS[i] = countOfLIS[j];
                 }
                 else if (lengthOfLIS[j] + 1 == lengthOfLIS[i]){
-                    if (stop==1){
-                        stop = 0;
-                        b = 0;
-                    }
-                    b += countOfLIS[j];
+                    countOfLIS[i] += countOfLIS[j];
                 }
-                /*
-                if (lengthOfLIS[j]+1 >= lengthOfLIS[i]){
-                    if (countOfLIS[i] == 0){
-                        countOfLIS[i] = countOfLIS[j];
-                        b++;
-                    }
-                    else
-                        b += 1;
-                }
-                else{
-                    if (countOfLIS[i] == 0)
-                        b++;
-                }
-                */
-                /* if (lengthOfLIS[j]+1 == lengthOfLIS[i]){
-                    countOfLIS[i] = max(countOfLIS[j], countOfLIS[i]);
-                    b = 0;
-                }
-                else
-                    b++;
-                */
-                /*
-                else if (lengthOfLIS[j]+1 == lengthOfLIS[i]){
-                    if (b==0)
-                        b = countOfLIS[i];
-                    b += 1;
-                }
-                */
-                //countOfLIS[i] = min(countOfLIS[i+1]+1, countOfLIS[j]+1); // count nunca pode avançar mais do que 1 int de uma vez
-                //countOfLIS[i] = max(countOfLIS[i], min(countOfLIS[i]+1, countOfLIS[j]));
             }
         }
-        // if (b!=0)
-        printf("b is %d\n", b);
-        countOfLIS[i] = max(b, 1);
-        // countOfLIS[i] = max(1, max(b, countOfLIS[i])); // 0 0 0 1 1
-        //printf("#%d#", b);
-        //countOfLIS[i] = 1+b;
+        countOfLIS[i] = max(countOfLIS[i], 1);
     }
     cout << endl;
     for (int i = 0; i < len; i++){
