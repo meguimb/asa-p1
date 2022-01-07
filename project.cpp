@@ -124,7 +124,7 @@ int algo_2(vector<int> seq1, int len1, vector<int> seq2, int len2)
         }
     }
 
-    // The maximum value in table[] is out result
+    // The maximum value in table[] is our result
     int result = 0;
     for (int i = 0; i < len2; i++)
         if (table[i] > result)
