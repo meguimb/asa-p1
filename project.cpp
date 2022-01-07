@@ -24,10 +24,14 @@ int main() {
     for(int i = 0; i < n; i++) {
         a = line[i];
 
-        if(a == ' ')
-            continue;
-        else {
-            num = a - '0';
+        if(a == ' ') {
+            sequence.push_back(num);
+            len++;
+            num = 0;
+        }
+        else
+            num = num * 10 + (a - '0');
+        if(i + 1 == n) {
             sequence.push_back(num);
             len++;
         }
