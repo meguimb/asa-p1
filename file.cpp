@@ -1,78 +1,70 @@
 #include <iostream>
 #include <vector>
-#include <bits/stdc++.h>
 #include <algorithm>
+#include <string>
 
 using namespace std;
-int *largest_seq_size(vector<int> arr1, int len);
-int *num_increasing_subs_size_k(vector<int> sequence, int len);
-int *algo_2(vector<int> sequence, int len);
+int *num_of_largest_increasing_seqs(vector<int> sequence, int len);
+int size_of_largest_common_seq(vector<int> seq1, int len1, vector<int> seq2, int len2);
 
 int main() {
-    int len=0, type, a;
-    vector<int> sequence, ordered_seq;
+    int len = 0, type, num = 0, n;
+    char a;
+    string line;
+    vector<int> sequence;
 
-    // receving input array
-    cin >> type; // type can be 1 or 2 for each problem
+    // receving input
+    getline(cin, line);
+    type = line[0] - '0'; // type can be 1 or 2 for each problem
 
-    while(cin>>a){
-        sequence.push_back(a);
-        len++;
+    getline(cin, line);
+
+    n = line.length();
+    for(int i = 0; i < n; i++) {
+        a = line[i];
+
+        if(a == ' ') {
+            sequence.push_back(num);
+            len++;
+            num = 0;
+        }
+        else
+            num = num * 10 + (a - '0');
+        if(i + 1 == n) {
+            sequence.push_back(num);
+            len++;
+        }
     }
 
-    // int *rtn_val = num_increasing_subs_size_k(sequence, len);
-    int *rtn_val = algo_2(sequence, len);
-    // printf de t e c, separados por um espaço, onde t é o tamanho da maior
-    // subsequencia e c o numero de subsequencias com tamanho t (maximo)
-    cout << rtn_val[0] << " " << rtn_val[1] << endl;
-    free(rtn_val);
+    if(type == 1) {
+        // int *rtn_val = num_increasing_subs_size_k(sequence, len);
+        int *rtn_val = num_of_largest_increasing_seqs(sequence, len);
+        // printf de t e c, separados por um espaço, onde t é o tamanho da maior
+        // subsequencia e c o numero de subsequencias com tamanho t (maximo)
+        cout << rtn_val[0] << " " << rtn_val[1] << endl;
+        delete rtn_val;
+    }
+
+    else if(type == 2) {
+        int len2 = 0;
+        vector<int> sequence2;
+
+        while(cin >> num) {
+            if (count(sequence.begin(), sequence.end(), num)){
+                sequence2.push_back(num);
+                len2++;
+            }
+        }
+
+        int rtn = size_of_largest_common_seq(sequence, len, sequence2, len2);
+        cout << rtn << endl;
+    }
     return 0;
 }
 
-int *num_increasing_subs_size_k(vector<int> sequence, int len){
-    // first value: size of longest subsequence
-    // second value: number of subsequences with that size
-    int *rtn_vals = (int *) malloc(sizeof(int)*2); 
-    int count_subs = 0;
-    vector<int> lis(len, 1); // initialize all longest increasing subsequences to 1 (each number is its own sequence)
-    vector<int> count(len, 1); // number of 
-
-    if (len <= 1) { 
-        return NULL; 
-    }
-
-    for (int i = 1; i < len; i++){
-        for (int j = 0; j < i; j++){
-            if (sequence[j] < sequence[i]){
-                if (lis[j] >= lis[i]){
-                    lis[i] = lis[j] + 1;
-                    count[i] = count[j];
-                } 
-                else if (lis[i] == lis[j] + 1){
-                    count[i] += count[j]; 
-                }
-            }
-        }
-    }
-    
-    // get first return value - size of longest subsequence which is maximum of lis
-    rtn_vals[0] = *max_element(lis.begin(), lis.end());
-
-    // get second return value - number of subsequences with max size (first return value)
-    for (int i = 0; i < len; i++){
-        if (lis[i] == rtn_vals[0]){
-            count_subs += count[i];
-        }
-    }
-    rtn_vals[1] = count_subs;
-
-    // return 
-    return rtn_vals;
-}
-
-int *algo_2(vector<int> sequence, int len){
+int *num_of_largest_increasing_seqs(vector<int> sequence, int len){
     int n_max_size = 0;
-    int *rtn_vals = (int *) malloc(sizeof(int)*2); 
+    int *rtn_vals = new int(2);
     // length of Longest Increasing Sequence starting at sequence[i]
     vector<int> lengthOfLIS(len, 1);
     // number of Longest Increasing Sequences of length lengthOfLIS[i] starting at sequence[i]
@@ -93,22 +85,6 @@ int *algo_2(vector<int> sequence, int len){
         }
         countOfLIS[i] = max(countOfLIS[i], 1);
     }
-    /*
-    cout << endl;
-    for (int i = 0; i < len; i++){
-        cout << sequence[i] << " ";
-    }
-    cout << endl;
-    for (int i = 0; i < len; i++){
-        cout << countOfLIS[i] << " ";
-    }
-    cout << endl;
-
-    for (int i = 0; i < len; i++){
-        cout << lengthOfLIS[i] << " ";
-    }
-    cout << endl;
-    */
     // get first return value - size of longest subsequence which is maximum of lis
     rtn_vals[0] = *max_element(lengthOfLIS.begin(), lengthOfLIS.end());
 
@@ -121,4 +97,32 @@ int *algo_2(vector<int> sequence, int len){
     rtn_vals[1] = n_max_size;
 
     return rtn_vals;
+}
+
+int size_of_largest_common_seq(vector<int> seq1, int len1, vector<int> seq2, int len2)
+{
+    vector<int> table(len2, 0);
+
+    for (int i = 0; i < len1; i++)
+    {
+        int current = 0;
+
+        for (int j = 0; j < len2; j++)
+        {
+            if (seq1[i] == seq2[j])
+                if (current + 1 > table[j])
+                    table[j] = current + 1;
+
+            if (seq1[i] > seq2[j])
+                if (table[j] > current)
+                    current = table[j];
+        }
+    }
+
+    int result = 0;
+    for (int i = 0; i < len2; i++)
+        if (table[i] > result)
+           result = table[i];
+
+    return result;
 }
