@@ -8,7 +8,7 @@ int *algo_1(vector<int> sequence, int len);
 int algo_2(vector<int> seq1, int len1, vector<int> seq2, int len2);
 
 int main() {
-    int len = 0, type, num, n;
+    int len = 0, type, num = 0, n;
     char a;
     string line;
     vector<int> sequence;
@@ -16,7 +16,7 @@ int main() {
     // receving input
     getline(cin, line);
     type = line[0] - '0'; // type can be 1 or 2 for each problem
-    
+
     getline(cin, line);
 
     n = line.length();
@@ -99,35 +99,24 @@ int *algo_1(vector<int> sequence, int len){
 
 int algo_2(vector<int> seq1, int len1, vector<int> seq2, int len2)
 {
-    // table[j] is going to store length of LCIS
-    // ending with seq2[j]. We initialize it as 0,
     vector<int> table(len2, 0);
 
-    // Traverse all elements of seq1[]
     for (int i = 0; i < len1; i++)
     {
-        // Initialize current length of LCIS
         int current = 0;
 
-        // For each element of seq1[], traverse all
-        // elements of seq2[].
         for (int j = 0; j < len2; j++)
         {
-            // If both the vectors have the same elements.
-            // Note that we don't break the loop here.
             if (seq1[i] == seq2[j])
                 if (current + 1 > table[j])
                     table[j] = current + 1;
 
-            /* Now seek for previous smaller common
-               element for current element of seq1 */
             if (seq1[i] > seq2[j])
                 if (table[j] > current)
                     current = table[j];
         }
     }
 
-    // The maximum value in table[] is our result
     int result = 0;
     for (int i = 0; i < len2; i++)
         if (table[i] > result)
